@@ -1218,13 +1218,18 @@ initReveal();
 <script src="assets/img14.js"></script>
 <script>
 function __kbimg(n){ var b = window['__KBIMG_'+n]; return b ? 'data:image/jpeg;base64,'+b : ''; }
+function __kbimgsrc(v){ var m = /^__KBIMG_(\d+)__$/.exec(v || ''); return m ? __kbimg(m[1]) : ''; }
 document.querySelectorAll('img[data-kbimg]').forEach(function(el){
   var s = __kbimg(el.getAttribute('data-kbimg')); if(s) el.src = s;
 });
 try {
-  (window.ITEMS||[]).forEach(function(it){
-    var m = /^__KBIMG_(\d+)__$/.exec(it.img || '');
-    if(m){ var s = __kbimg(m[1]); if(s) it.img = s; }
+  /* ITEMS is declared with const -> NOT on window; fix placeholders to data URIs */
+  (typeof ITEMS !== 'undefined' ? ITEMS : []).forEach(function(it){
+    var s = __kbimgsrc(it.img); if(s) it.img = s;
+  });
+  /* fix <img> tags already rendered with placeholder src */
+  document.querySelectorAll('img').forEach(function(el){
+    var s = __kbimgsrc(el.getAttribute('src')); if(s) el.src = s;
   });
 } catch(e){}
 </script>
